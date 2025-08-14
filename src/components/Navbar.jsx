@@ -42,7 +42,7 @@ export default function Navbar() {
 
   return (
     <nav className="container mx-auto flex items-center sm:justify-between justify-center py-2 sm:py-4">
-      <Link to="/" className="text-xl font-bold hidden sm:block">
+      <Link to="/" className="text-2xl font-bold hidden sm:block">
         ManaPoliya
       </Link>
 

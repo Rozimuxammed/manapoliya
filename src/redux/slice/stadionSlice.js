@@ -1,288 +1,287 @@
 import { createSlice } from "@reduxjs/toolkit";
-
+import bunyodkor from "../../assets/bunyodkor.jpg";
+import paxtakor from "../../assets/paxtakor.jpg";
+import yoshlar from "../../assets/yoshlar.jpg";
+import samarqand from "../../assets/samarqand.jpg";
+import navoiy from "../../assets/navoiy.jpg";
+import fargona from "../../assets/fargona.jpg";
 const initialState = {
   data: [
     {
       id: 1,
-      nomi: "Bunyodkor Staidoni",
-      rasmi: "https://example.com/images/bunyodkor-stadium.jpg",
-      narxi: {
-        soatlik: 500000,
-        kunlik: 3000000,
-        valyuta: "UZS",
+      name: "Bunyodkor Stadium",
+      image: bunyodkor,
+      price: {
+        hourly: 500000,
+        daily: 3000000,
+        currency: "UZS",
       },
-      joylashuvi: {
-        manzili: "Chilonzor tumani, Bodomzor yo'li 2-uy, Toshkent",
-        shahri: "Toshkent",
-        viloyati: "Toshkent viloyati",
-        koordinatalar: {
-          kenglik: 41.2358,
-          uzunlik: 69.1853,
+      location: {
+        address: "Chilonzor tumani, Bodomzor ko'chasi 2, Toshkent",
+        city: "Toshkent",
+        region: "Toshkent viloyati",
+        coordinates: {
+          latitude: 41.2358,
+          longitude: 69.1853,
         },
       },
-      turi: "usti yopiq",
-      imkoniyatlar: [
+      type: "Usti yopiq",
+      facilities: [
         "Proyektorlar",
         "VIP zal",
-        "Parking",
+        "Avtoturargoh",
         "Restoran",
-        "Tibbiy xona",
+        "Tibbiyot xonasi",
       ],
-      mavjudlik: {
-        dushanba: ["09:00-22:00"],
-        seshanba: ["09:00-22:00"],
-        chorshanba: ["09:00-22:00"],
-        payshanba: ["09:00-22:00"],
-        juma: ["09:00-22:00"],
-        shanba: ["08:00-23:00"],
-        yakshanba: ["08:00-23:00"],
+      availability: {
+        monday: ["09:00-22:00"],
+        tuesday: ["09:00-22:00"],
+        wednesday: ["09:00-22:00"],
+        thursday: ["09:00-22:00"],
+        friday: ["09:00-22:00"],
+        saturday: ["08:00-23:00"],
+        sunday: ["08:00-23:00"],
       },
-      aloqa: {
-        telefon: "+998901234567",
+      contact: {
+        phone: "+998901234567",
         email: "info@bunyodkor.uz",
-        veb_sayt: "https://bunyodkor.uz",
       },
-      reyting: 4.8,
-      sharhlar: 156,
-      tavsif:
-        "Toshkentdagi eng zamonaviy stadionlardan biri. Professional futbol o'yinlari uchun mo'ljallangan.",
-      parking_joylari: 500,
-      qurilish_yili: 2012,
+      rating: 4.8,
+      reviews: 156,
+      description:
+        "Toshkentdagi eng zamonaviy stadionlardan biri. Professional futbol o‘yinlari uchun mo‘ljallangan.",
+      parking_spaces: 500,
+      construction_year: 2012,
     },
     {
       id: 2,
-      nomi: "Pakhtakor Stadioni",
-      rasmi: "https://example.com/images/pakhtakor-stadium.jpg",
-      narxi: {
-        soatlik: 400000,
-        kunlik: 2500000,
-        valyuta: "UZS",
+      name: "Paxtakor Stadium",
+      image: paxtakor,
+      price: {
+        hourly: 400000,
+        daily: 2500000,
+        currency: "UZS",
       },
-      joylashuvi: {
-        manzili: "Mirzo Ulug'bek tumani, Pakhtakor ko'chasi 1-uy, Toshkent",
-        shahri: "Toshkent",
-        viloyati: "Toshkent viloyati",
-        koordinatalar: {
-          kenglik: 41.3111,
-          uzunlik: 69.2797,
+      location: {
+        address: "Mirzo Ulug‘bek tumani, Paxtakor ko‘chasi 1, Toshkent",
+        city: "Toshkent",
+        region: "Toshkent viloyati",
+        coordinates: {
+          latitude: 41.3111,
+          longitude: 69.2797,
         },
       },
-      turi: "usti yopiq",
-      imkoniyatlar: [
+      type: "Usti yopiq",
+      facilities: [
         "Proyektorlar",
         "Matbuot markazi",
-        "Parking",
+        "Avtoturargoh",
         "Xavfsizlik",
-        "Mashq maydonlari",
+        "Mashg‘ulot maydonlari",
       ],
-      mavjudlik: {
-        dushanba: ["10:00-21:00"],
-        seshanba: ["10:00-21:00"],
-        chorshanba: ["10:00-21:00"],
-        payshanba: ["10:00-21:00"],
-        juma: ["10:00-21:00"],
-        shanba: ["09:00-22:00"],
-        yakshanba: ["09:00-22:00"],
+      availability: {
+        monday: ["10:00-21:00"],
+        tuesday: ["10:00-21:00"],
+        wednesday: ["10:00-21:00"],
+        thursday: ["10:00-21:00"],
+        friday: ["10:00-21:00"],
+        saturday: ["09:00-22:00"],
+        sunday: ["09:00-22:00"],
       },
-      aloqa: {
-        telefon: "+998901234568",
+      contact: {
+        phone: "+998901234568",
         email: "contact@pakhtakor.uz",
-        veb_sayt: "https://pakhtakor.uz",
       },
-      reyting: 4.5,
-      sharhlar: 89,
-      tavsif: "Tarixiy stadion, ko'plab muhim o'yinlarga mezbonlik qilgan.",
-      parking_joylari: 300,
-      qurilish_yili: 1956,
+      rating: 4.5,
+      reviews: 89,
+      description: "Ko‘plab muhim o‘yinlarga mezbonlik qilgan tarixiy stadion.",
+      parking_spaces: 300,
+      construction_year: 1956,
     },
     {
       id: 3,
-      nomi: "Yoshlar Sport Majmuasi",
-      rasmi: "https://example.com/images/yoshlar-stadium.jpg",
-      narxi: {
-        soatlik: 200000,
-        kunlik: 1200000,
-        valyuta: "UZS",
+      name: "Yoshlar sport majmuasi",
+      image: yoshlar,
+      price: {
+        hourly: 200000,
+        daily: 1200000,
+        currency: "UZS",
       },
-      joylashuvi: {
-        manzili: "Yakkasaroy tumani, Amir Temur shoh ko'chasi 78, Toshkent",
-        shahri: "Toshkent",
-        viloyati: "Toshkent viloyati",
-        koordinatalar: {
-          kenglik: 41.2995,
-          uzunlik: 69.2401,
+      location: {
+        address: "Yakkasaroy tumani, Amir Temur shoh ko‘chasi 78, Toshkent",
+        city: "Toshkent",
+        region: "Toshkent viloyati",
+        coordinates: {
+          latitude: 41.2995,
+          longitude: 69.2401,
         },
       },
-      turi: "usti ochiq",
-      imkoniyatlar: [
+      type: "Usti ochiq",
+      facilities: [
         "Proyektorlar",
-        "Kiyinish xonalari",
-        "Parking",
+        "Kiyim almashtirish xonalari",
+        "Avtoturargoh",
         "Sport zali",
         "Suzish havzasi",
       ],
-      mavjudlik: {
-        dushanba: ["06:00-23:00"],
-        seshanba: ["06:00-23:00"],
-        chorshanba: ["06:00-23:00"],
-        payshanba: ["06:00-23:00"],
-        juma: ["06:00-23:00"],
-        shanba: ["06:00-24:00"],
-        yakshanba: ["06:00-24:00"],
+      availability: {
+        monday: ["06:00-23:00"],
+        tuesday: ["06:00-23:00"],
+        wednesday: ["06:00-23:00"],
+        thursday: ["06:00-23:00"],
+        friday: ["06:00-23:00"],
+        saturday: ["06:00-24:00"],
+        sunday: ["06:00-24:00"],
       },
-      aloqa: {
-        telefon: "+998901234569",
+      contact: {
+        phone: "+998901234569",
         email: "info@yoshlar-sport.uz",
-        veb_sayt: "https://yoshlar-sport.uz",
       },
-      reyting: 4.2,
-      sharhlar: 67,
-      tavsif:
-        "Yoshlar uchun mo'ljallangan sport majmuasi. Turli sport turlari uchun qulay.",
-      parking_joylari: 150,
-      qurilish_yili: 2018,
+      rating: 4.2,
+      reviews: 67,
+      description:
+        "Yoshlar uchun mo‘ljallangan, turli sport turlari uchun mos kompleks.",
+      parking_spaces: 150,
+      construction_year: 2018,
     },
     {
       id: 4,
-      nomi: "Samarqand Staidoni",
-      rasmi: "https://example.com/images/samarqand-stadium.jpg",
-      narxi: {
-        soatlik: 300000,
-        kunlik: 1800000,
-        valyuta: "UZS",
+      name: "Samarqand stadioni",
+      image: samarqand,
+      price: {
+        hourly: 300000,
+        daily: 1800000,
+        currency: "UZS",
       },
-      joylashuvi: {
-        manzili: "Registon ko'chasi 15, Samarqand",
-        shahri: "Samarqand",
-        viloyati: "Samarqand viloyati",
-        koordinatalar: {
-          kenglik: 39.627,
-          uzunlik: 66.975,
+      location: {
+        address: "Registon ko‘chasi 15, Samarqand",
+        city: "Samarqand",
+        region: "Samarqand viloyati",
+        coordinates: {
+          latitude: 39.627,
+          longitude: 66.975,
         },
       },
-      turi: "usti yopiq",
-      imkoniyatlar: [
+      type: "Usti yopiq",
+      facilities: [
         "Proyektorlar",
-        "VIP sektori",
-        "Parking",
-        "Kafeterya",
-        "Birinchi yordam",
+        "VIP bo‘lim",
+        "Avtoturargoh",
+        "Kafe",
+        "Birinchi yordam xonasi",
       ],
-      mavjudlik: {
-        dushanba: ["08:00-22:00"],
-        seshanba: ["08:00-22:00"],
-        chorshanba: ["08:00-22:00"],
-        payshanba: ["08:00-22:00"],
-        juma: ["08:00-22:00"],
-        shanba: ["07:00-23:00"],
-        yakshanba: ["07:00-23:00"],
+      availability: {
+        monday: ["08:00-22:00"],
+        tuesday: ["08:00-22:00"],
+        wednesday: ["08:00-22:00"],
+        thursday: ["08:00-22:00"],
+        friday: ["08:00-22:00"],
+        saturday: ["07:00-23:00"],
+        sunday: ["07:00-23:00"],
       },
-      aloqa: {
-        telefon: "+998901234570",
+      contact: {
+        phone: "+998901234570",
         email: "stadium@samarqand.uz",
-        veb_sayt: "https://samarqand-stadium.uz",
       },
-      reyting: 4.6,
-      sharhlar: 112,
-      tavsif:
-        "Samarqand shahrining markaziy staidoni. Tarixiy shahar markazida joylashgan.",
-      parking_joylari: 200,
-      qurilish_yili: 2008,
+      rating: 4.6,
+      reviews: 112,
+      description:
+        "Samarqandning markaziy stadioni. Tarixiy shahar markazida joylashgan.",
+      parking_spaces: 200,
+      construction_year: 2008,
     },
     {
       id: 5,
-      nomi: "Navoi Staidoni",
-      rasmi: "https://example.com/images/navoi-stadium.jpg",
-      narxi: {
-        soatlik: 250000,
-        kunlik: 1500000,
-        valyuta: "UZS",
+      name: "Navoiy stadioni",
+      image: navoiy,
+      price: {
+        hourly: 250000,
+        daily: 1500000,
+        currency: "UZS",
       },
-      joylashuvi: {
-        manzili: "Mustaqillik shoh ko'chasi 45, Navoi",
-        shahri: "Navoi",
-        viloyati: "Navoi viloyati",
-        koordinatalar: {
-          kenglik: 40.0844,
-          uzunlik: 65.3792,
+      location: {
+        address: "Mustaqillik prospekti 45, Navoiy",
+        city: "Navoiy",
+        region: "Navoiy viloyati",
+        coordinates: {
+          latitude: 40.0844,
+          longitude: 65.3792,
         },
       },
-      turi: "usti yopiq",
-      imkoniyatlar: [
+      type: "Usti yopiq",
+      facilities: [
         "Proyektorlar",
-        "Parking",
+        "Avtoturargoh",
         "Xavfsizlik",
-        "Kafeterya",
-        "Mashq maydoni",
+        "Kafe",
+        "Mashg‘ulot maydoni",
       ],
-      mavjudlik: {
-        dushanba: ["09:00-21:00"],
-        seshanba: ["09:00-21:00"],
-        chorshanba: ["09:00-21:00"],
-        payshanba: ["09:00-21:00"],
-        juma: ["09:00-21:00"],
-        shanba: ["08:00-22:00"],
-        yakshanba: ["08:00-22:00"],
+      availability: {
+        monday: ["09:00-21:00"],
+        tuesday: ["09:00-21:00"],
+        wednesday: ["09:00-21:00"],
+        thursday: ["09:00-21:00"],
+        friday: ["09:00-21:00"],
+        saturday: ["08:00-22:00"],
+        sunday: ["08:00-22:00"],
       },
-      aloqa: {
-        telefon: "+998901234571",
+      contact: {
+        phone: "+998901234571",
         email: "info@navoi-stadium.uz",
-        veb_sayt: "https://navoi-stadium.uz",
       },
-      reyting: 4.3,
-      sharhlar: 45,
-      tavsif:
-        "Navoi shahridagi asosiy stadion. Mahalliy va mintaqaviy musobaqalar uchun.",
-      parking_joylari: 180,
-      qurilish_yili: 2015,
+      rating: 4.3,
+      reviews: 45,
+      description:
+        "Navoiy shahrining asosiy stadioni. Mahalliy va mintaqaviy musobaqalar uchun ishlatiladi.",
+      parking_spaces: 180,
+      construction_year: 2015,
     },
     {
       id: 6,
-      nomi: "Farg'ona Markaziy Staidoni",
-      rasmi: "https://example.com/images/fergana-stadium.jpg",
-      narxi: {
-        soatlik: 350000,
-        kunlik: 2000000,
-        valyuta: "UZS",
+      name: "Farg‘ona markaziy stadioni",
+      image: fargona,
+      price: {
+        hourly: 350000,
+        daily: 2000000,
+        currency: "UZS",
       },
-      joylashuvi: {
-        manzili: "Al-Farg'oniy ko'chasi 28, Farg'ona",
-        shahri: "Farg'ona",
-        viloyati: "Farg'ona viloyati",
-        koordinatalar: {
-          kenglik: 40.3842,
-          uzunlik: 71.7843,
+      location: {
+        address: "Al-Farg‘oniy ko‘chasi 28, Farg‘ona",
+        city: "Farg‘ona",
+        region: "Farg‘ona viloyati",
+        coordinates: {
+          latitude: 40.3842,
+          longitude: 71.7843,
         },
       },
-      turi: "usti yopiq",
-      imkoniyatlar: [
+      type: "Usti yopiq",
+      facilities: [
         "Proyektorlar",
         "VIP zal",
-        "Parking",
+        "Avtoturargoh",
         "Restoran",
-        "Tibbiy markaz",
-        "Media markaz",
+        "Tibbiyot markazi",
+        "Media markazi",
       ],
-      mavjudlik: {
-        dushanba: ["08:00-22:00"],
-        seshanba: ["08:00-22:00"],
-        chorshanba: ["08:00-22:00"],
-        payshanba: ["08:00-22:00"],
-        juma: ["08:00-22:00"],
-        shanba: ["07:00-23:00"],
-        yakshanba: ["07:00-23:00"],
+      availability: {
+        monday: ["08:00-22:00"],
+        tuesday: ["08:00-22:00"],
+        wednesday: ["08:00-22:00"],
+        thursday: ["08:00-22:00"],
+        friday: ["08:00-22:00"],
+        saturday: ["07:00-23:00"],
+        sunday: ["07:00-23:00"],
       },
-      aloqa: {
-        telefon: "+998901234572",
+      contact: {
+        phone: "+998901234572",
         email: "stadium@fergana.uz",
-        veb_sayt: "https://fergana-stadium.uz",
       },
-      reyting: 4.7,
-      sharhlar: 98,
-      tavsif:
-        "Farg'ona vodiysining eng yirik staidoni. Professional darajadagi sport tadbirlari uchun.",
-      parking_joylari: 250,
-      qurilish_yili: 2010,
+      rating: 4.7,
+      reviews: 98,
+      description:
+        "Farg‘ona vodiysidagi eng yirik stadion. Professional darajadagi sport tadbirlari uchun mo‘ljallangan.",
+      parking_spaces: 250,
+      construction_year: 2010,
     },
   ],
 };
