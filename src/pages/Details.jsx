@@ -19,6 +19,8 @@ import {
   Building2,
   ParkingCircle,
   Globe,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -43,12 +45,37 @@ import { Label } from "@/components/ui/label";
 export default function Details() {
   const { id } = useParams();
   const { data } = useSelector((state) => state.stadions);
-  const stadium =
-    data?.find((item) => String(item.id) === String(id)) || stadiumData;
+  const stadium = data?.find((item) => String(item.id) === String(id));
 
   if (!stadium) {
-    return <div>Ma&apos;lumot topilmadi</div>;
+    return <div>No data found</div>;
   }
+
+  // State for carousel and transition
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+
+  // Handle next image with transition
+  const nextImage = () => {
+    setIsTransitioning(true);
+    console.log(`Starting transition for stadium ${stadium.id}: Next image`);
+    setCurrentImageIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+    setTimeout(() => {
+      setIsTransitioning(false);
+      console.log(`Transition ended for stadium ${stadium.id}`);
+    }, 500); // Match transition duration (500ms)
+  };
+
+  // Handle previous image with transition
+  const prevImage = () => {
+    setIsTransitioning(true);
+    console.log(`Starting transition for stadium ${stadium.id}: Prev image`);
+    setCurrentImageIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+    setTimeout(() => {
+      setIsTransitioning(false);
+      console.log(`Transition ended for stadium ${stadium.id}`);
+    }, 500); // Match transition duration (500ms)
+  };
 
   // State for booking form
   const [selectedDate, setSelectedDate] = useState("");
@@ -56,19 +83,49 @@ export default function Details() {
   const [selectedDuration, setSelectedDuration] = useState("hourly");
   const [bookingMessage, setBookingMessage] = useState("");
 
-  // Generate time slots for the selected date
+  // Map Uzbek day names to English keys
+  const dayMap = {
+    dushanba: "monday",
+    seshanba: "tuesday",
+    chorshanba: "wednesday",
+    payshanba: "thursday",
+    juma: "friday",
+    shanba: "saturday",
+    yakshanba: "sunday",
+  };
+
+  // Fallback to a default image if image is not an array or is empty
+  const images =
+    Array.isArray(stadium.image) && stadium.image.length > 0
+      ? stadium.image
+      : ["/src/assets/default.jpg"];
+
+  console.log(
+    `Stadium ${stadium.id} images:`,
+    images,
+    `Current index: ${currentImageIndex}`
+  );
+
   const getTimeSlots = (date) => {
     if (!date) return [];
-    const dayOfWeek = new Date(date)
+
+    // Mock schedule as fallback
+    const mockSchedule = ["09:00-22:00"];
+
+    const dayOfWeekUzbek = new Date(date)
       .toLocaleString("uz-UZ", { weekday: "long" })
       .toLowerCase();
-    const availability = stadium.availability[dayOfWeek] || [];
+    const dayOfWeek = dayMap[dayOfWeekUzbek] || dayOfWeekUzbek;
+    const availability = stadium.availability[dayOfWeek] || mockSchedule;
+
     if (!availability.length) return [];
 
-    // Parse the time range (e.g., "10:00-21:00") into hourly slots
     const [start, end] = availability[0].split("-");
     const startHour = parseInt(start.split(":")[0], 10);
     const endHour = parseInt(end.split(":")[0], 10);
+
+    if (isNaN(startHour) || isNaN(endHour)) return [];
+
     const slots = [];
     for (let hour = startHour; hour < endHour; hour++) {
       slots.push(`${hour}:00`);
@@ -78,14 +135,12 @@ export default function Details() {
 
   const timeSlots = getTimeSlots(selectedDate);
 
-  // Handle booking submission
   const handleBooking = (e) => {
     e.preventDefault();
     if (!selectedDate || !selectedTime || !selectedDuration) {
       setBookingMessage("Iltimos, sanani, vaqtni va davomiylikni tanlang.");
       return;
     }
-    // Simulate booking submission (replace with API call or Redux action)
     console.log({
       stadiumId: stadium.id,
       date: selectedDate,
@@ -115,33 +170,55 @@ export default function Details() {
     <div className="container mx-auto p-4 mb-16 max-w-5xl">
       <Card className="overflow-hidden border shadow-lg rounded-2xl">
         <CardHeader className="p-0 relative">
-          <img
-            src={stadium.image}
-            alt={stadium.name}
-            className="w-[95%] rounded-md mx-auto h-52 sm:h-64 md:h-80 object-cover"
-          />
-          <div className="absolute top-4 left-10 flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="bg-white/90 dark:bg-gray-900/80 size-8 rounded-full shadow-md"
-            >
-              <Heart className="size-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="bg-white/90 dark:bg-gray-900/80 size-8 rounded-full shadow-md"
-            >
-              <Share2 className="size-4 text-primary" />
-            </Button>
-          </div>
-          <div className="absolute bottom-4 right-10 flex items-center bg-white/90 dark:bg-gray-900/80 px-3 py-1 rounded-full text-sm shadow-md">
-            <Star className="size-4 mr-1 text-yellow-500" />
-            <span className="font-medium">{stadium.rating}</span>
-            <span className="text-muted-foreground ml-1">
-              ({stadium.reviews} sharh)
-            </span>
+          <div className="w-[95%] mx-auto h-52 sm:h-64 md:h-80">
+            <img
+              src={images[currentImageIndex]}
+              alt={`${stadium.name} ${currentImageIndex + 1}`}
+              className={`w-full h-full rounded-md object-cover`}
+            />
+            {images.length > 1 && (
+              <>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute top-1/2 left-5 sm:left-10 transform -translate-y-1/2 bg-white/90 dark:bg-gray-900/80 size-8 rounded-full shadow-md"
+                  onClick={prevImage}
+                >
+                  <ChevronLeft className="size-4 text-primary" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute top-1/2 right-5 sm:right-10 transform -translate-y-1/2 bg-white/90 dark:bg-gray-900/80 size-8 rounded-full shadow-md"
+                  onClick={nextImage}
+                >
+                  <ChevronRight className="size-4 text-primary" />
+                </Button>
+              </>
+            )}
+            <div className="absolute top-4 left-5 sm:left-10 flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="bg-white/90 dark:bg-gray-900/80 size-8 rounded-full shadow-md"
+              >
+                <Heart className="size-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="bg-white/90 dark:bg-gray-900/80 size-8 rounded-full shadow-md"
+              >
+                <Share2 className="size-4 text-primary" />
+              </Button>
+            </div>
+            <div className="absolute bottom-4 right-10 flex items-center bg-white/90 dark:bg-gray-900/80 px-3 py-1 rounded-full text-sm shadow-md">
+              <Star className="size-4 mr-1 text-yellow-500" />
+              <span className="font-medium">{stadium.rating}</span>
+              <span className="text-muted-foreground ml-1">
+                ({stadium.reviews} sharhlar)
+              </span>
+            </div>
           </div>
         </CardHeader>
 
@@ -163,7 +240,7 @@ export default function Details() {
               </div>
               <div className="flex items-center gap-2">
                 <Calendar className="size-5 text-primary" />
-                <span className="font-medium">Qurilish yili:</span>{" "}
+                <span className="font-medium">Qurilgan Yil:</span>{" "}
                 {stadium.construction_year}
               </div>
               <div className="flex items-center gap-2">
@@ -202,6 +279,35 @@ export default function Details() {
                 </a>
               </div>
             </div>
+
+            <div className="p-6 mt-10">
+              <h3 className="font-semibold mb-2 flex items-center gap-2">
+                <MapPin className="size-5 text-primary" />
+                Joylashuv
+              </h3>
+              <p className="text-sm mb-4 text-muted-foreground">
+                {stadium.location.address}, {stadium.location.city},{" "}
+                {stadium.location.region}
+              </p>
+              <div className="w-full h-64 mb-4 overflow-hidden rounded-xl shadow-md">
+                <iframe
+                  src={mapEmbedUrl}
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                ></iframe>
+              </div>
+              <Button
+                onClick={handleNavigate}
+                className="w-full sm:w-auto bg-primary text-white hover:bg-primary/90"
+              >
+                <Globe className="size-4 mr-2" />
+                Borish (Yandex navidator)
+              </Button>
+            </div>
           </div>
 
           <div className="space-y-8">
@@ -220,7 +326,7 @@ export default function Details() {
             <Separator className="my-4 md:hidden" />
 
             <div>
-              <h3 className="font-semibold mb-2">Mavjudlik</h3>
+              <h3 className="font-semibold mb-2">Ish vaqti</h3>
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -245,11 +351,13 @@ export default function Details() {
 
             <Separator className="my-4 md:hidden" />
 
-            <div>
+            <div className="mt-14">
               <h3 className="font-semibold mb-2">Band qilish</h3>
               <form onSubmit={handleBooking} className="space-y-4">
                 <div>
-                  <Label htmlFor="date">Sana</Label>
+                  <Label className="mb-3" htmlFor="date">
+                    Sana
+                  </Label>
                   <Input
                     type="date"
                     id="date"
@@ -260,7 +368,9 @@ export default function Details() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="time">Vaqt</Label>
+                  <Label className="mb-3" htmlFor="time">
+                    Vaqt
+                  </Label>
                   <Select value={selectedTime} onValueChange={setSelectedTime}>
                     <SelectTrigger id="time">
                       <SelectValue placeholder="Vaqt tanlang" />
@@ -281,7 +391,9 @@ export default function Details() {
                   </Select>
                 </div>
                 <div>
-                  <Label htmlFor="duration">Davomiylik</Label>
+                  <Label className="mb-3" htmlFor="duration">
+                    Davomiylik
+                  </Label>
                   <Select
                     value={selectedDuration}
                     onValueChange={setSelectedDuration}
@@ -310,37 +422,6 @@ export default function Details() {
             </div>
           </div>
         </CardContent>
-
-        <Separator />
-
-        <div className="p-6">
-          <h3 className="font-semibold mb-2 flex items-center gap-2">
-            <MapPin className="size-5 text-primary" />
-            Joylashuv
-          </h3>
-          <p className="text-sm mb-4 text-muted-foreground">
-            {stadium.location.address}, {stadium.location.city},{" "}
-            {stadium.location.region}
-          </p>
-          <div className="w-full h-64 mb-4 overflow-hidden rounded-xl shadow-md">
-            <iframe
-              src={mapEmbedUrl}
-              width="100%"
-              height="100%"
-              style={{ border: 0 }}
-              allowFullScreen
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-            ></iframe>
-          </div>
-          <Button
-            onClick={handleNavigate}
-            className="w-full sm:w-auto bg-primary text-white hover:bg-primary/90"
-          >
-            <Globe className="size-4 mr-2" />
-            Borish (Yandex Maps)
-          </Button>
-        </div>
       </Card>
     </div>
   );

@@ -10,7 +10,7 @@ const initialState = {
     {
       id: 1,
       name: "Bunyodkor Stadium",
-      image: bunyodkor,
+      image: [bunyodkor, paxtakor, yoshlar, samarqand],
       price: {
         hourly: 500000,
         daily: 3000000,
@@ -34,13 +34,13 @@ const initialState = {
         "Tibbiyot xonasi",
       ],
       availability: {
-        monday: ["09:00-22:00"],
-        tuesday: ["09:00-22:00"],
-        wednesday: ["09:00-22:00"],
-        thursday: ["09:00-22:00"],
-        friday: ["09:00-22:00"],
-        saturday: ["08:00-23:00"],
-        sunday: ["08:00-23:00"],
+        dushanba: ["09:00-22:00"],
+        seshanba: ["09:00-22:00"],
+        chorshanba: ["09:00-22:00"],
+        payshanba: ["09:00-22:00"],
+        juma: ["09:00-22:00"],
+        shanba: ["08:00-23:00"],
+        yakshanba: ["08:00-23:00"],
       },
       contact: {
         phone: "+998901234567",
@@ -56,7 +56,7 @@ const initialState = {
     {
       id: 2,
       name: "Paxtakor Stadium",
-      image: paxtakor,
+      image: [paxtakor, yoshlar, samarqand, navoiy],
       price: {
         hourly: 400000,
         daily: 2500000,
@@ -80,13 +80,13 @@ const initialState = {
         "Mashg‘ulot maydonlari",
       ],
       availability: {
-        monday: ["10:00-21:00"],
-        tuesday: ["10:00-21:00"],
-        wednesday: ["10:00-21:00"],
-        thursday: ["10:00-21:00"],
-        friday: ["10:00-21:00"],
-        saturday: ["09:00-22:00"],
-        sunday: ["09:00-22:00"],
+        dushanba: ["10:00-21:00"],
+        seshanba: ["10:00-21:00"],
+        chorshanba: ["10:00-21:00"],
+        payshanba: ["10:00-21:00"],
+        juma: ["10:00-21:00"],
+        shanba: ["09:00-22:00"],
+        yakshanba: ["09:00-22:00"],
       },
       contact: {
         phone: "+998901234568",
@@ -101,7 +101,7 @@ const initialState = {
     {
       id: 3,
       name: "Yoshlar sport majmuasi",
-      image: yoshlar,
+      image: [yoshlar, samarqand, navoiy, fargona],
       price: {
         hourly: 200000,
         daily: 1200000,
@@ -125,13 +125,13 @@ const initialState = {
         "Suzish havzasi",
       ],
       availability: {
-        monday: ["06:00-23:00"],
-        tuesday: ["06:00-23:00"],
-        wednesday: ["06:00-23:00"],
-        thursday: ["06:00-23:00"],
-        friday: ["06:00-23:00"],
-        saturday: ["06:00-24:00"],
-        sunday: ["06:00-24:00"],
+        dushanba: ["06:00-23:00"],
+        seshanba: ["06:00-23:00"],
+        chorshanba: ["06:00-23:00"],
+        payshanba: ["06:00-23:00"],
+        juma: ["06:00-23:00"],
+        shanba: ["06:00-24:00"],
+        yakshanba: ["06:00-24:00"],
       },
       contact: {
         phone: "+998901234569",
@@ -147,7 +147,7 @@ const initialState = {
     {
       id: 4,
       name: "Samarqand stadioni",
-      image: samarqand,
+      image: [samarqand, navoiy, fargona, bunyodkor],
       price: {
         hourly: 300000,
         daily: 1800000,
@@ -171,13 +171,13 @@ const initialState = {
         "Birinchi yordam xonasi",
       ],
       availability: {
-        monday: ["08:00-22:00"],
-        tuesday: ["08:00-22:00"],
-        wednesday: ["08:00-22:00"],
-        thursday: ["08:00-22:00"],
-        friday: ["08:00-22:00"],
-        saturday: ["07:00-23:00"],
-        sunday: ["07:00-23:00"],
+        dushanba: ["08:00-22:00"],
+        seshanba: ["08:00-22:00"],
+        chorshanba: ["08:00-22:00"],
+        payshanba: ["08:00-22:00"],
+        juma: ["08:00-22:00"],
+        shanba: ["07:00-23:00"],
+        yakshanba: ["07:00-23:00"],
       },
       contact: {
         phone: "+998901234570",
@@ -193,7 +193,7 @@ const initialState = {
     {
       id: 5,
       name: "Navoiy stadioni",
-      image: navoiy,
+      image: [navoiy, fargona, bunyodkor, paxtakor],
       price: {
         hourly: 250000,
         daily: 1500000,
@@ -217,13 +217,13 @@ const initialState = {
         "Mashg‘ulot maydoni",
       ],
       availability: {
-        monday: ["09:00-21:00"],
-        tuesday: ["09:00-21:00"],
-        wednesday: ["09:00-21:00"],
-        thursday: ["09:00-21:00"],
-        friday: ["09:00-21:00"],
-        saturday: ["08:00-22:00"],
-        sunday: ["08:00-22:00"],
+        dushanba: ["09:00-21:00"],
+        seshanba: ["09:00-21:00"],
+        chorshanba: ["09:00-21:00"],
+        payshanba: ["09:00-21:00"],
+        juma: ["09:00-21:00"],
+        shanba: ["08:00-22:00"],
+        yakshanba: ["08:00-22:00"],
       },
       contact: {
         phone: "+998901234571",
@@ -239,7 +239,7 @@ const initialState = {
     {
       id: 6,
       name: "Farg‘ona markaziy stadioni",
-      image: fargona,
+      image: [fargona, bunyodkor, paxtakor, yoshlar],
       price: {
         hourly: 350000,
         daily: 2000000,
@@ -264,13 +264,13 @@ const initialState = {
         "Media markazi",
       ],
       availability: {
-        monday: ["08:00-22:00"],
-        tuesday: ["08:00-22:00"],
-        wednesday: ["08:00-22:00"],
-        thursday: ["08:00-22:00"],
-        friday: ["08:00-22:00"],
-        saturday: ["07:00-23:00"],
-        sunday: ["07:00-23:00"],
+        dushanba: ["08:00-22:00"],
+        seshanba: ["08:00-22:00"],
+        chorshanba: ["08:00-22:00"],
+        payshanba: ["08:00-22:00"],
+        juma: ["08:00-22:00"],
+        shanba: ["07:00-23:00"],
+        yakshanba: ["07:00-23:00"],
       },
       contact: {
         phone: "+998901234572",
