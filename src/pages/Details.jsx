@@ -365,6 +365,7 @@ export default function Details() {
                     onChange={(e) => setSelectedDate(e.target.value)}
                     className="w-full"
                     min={new Date().toISOString().split("T")[0]}
+                    placeholder="Sana tanlang"
                   />
                 </div>
                 <div>
