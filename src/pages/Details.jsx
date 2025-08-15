@@ -321,7 +321,7 @@ export default function Details() {
               </div>
               <Button
                 onClick={handleNavigate}
-                className="w-full sm:w-auto bg-primary text-white hover:bg-primary/90"
+                className="w-full sm:w-auto bg-primary text-white dark:text-gray-950 hover:bg-primary/90"
               >
                 <Globe className="size-4 mr-2" />
                 Borish (Yandex navidator)
