@@ -1,6 +1,6 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -41,49 +41,44 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { addNewData } from "../redux/slice/stadionSlice";
 
 export default function Details() {
   const { id } = useParams();
   const { data } = useSelector((state) => state.stadions);
+
   const stadium = data?.find((item) => String(item.id) === String(id));
 
   if (!stadium) {
     return <div>No data found</div>;
   }
 
-  // State for carousel and transition
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
-  // Handle next image with transition
+  const dispatch = useDispatch();
+
   const nextImage = () => {
     setIsTransitioning(true);
-    console.log(`Starting transition for stadium ${stadium.id}: Next image`);
     setCurrentImageIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
     setTimeout(() => {
       setIsTransitioning(false);
-      console.log(`Transition ended for stadium ${stadium.id}`);
-    }, 500); // Match transition duration (500ms)
+    }, 500);
   };
 
-  // Handle previous image with transition
   const prevImage = () => {
     setIsTransitioning(true);
-    console.log(`Starting transition for stadium ${stadium.id}: Prev image`);
     setCurrentImageIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
     setTimeout(() => {
       setIsTransitioning(false);
-      console.log(`Transition ended for stadium ${stadium.id}`);
-    }, 500); // Match transition duration (500ms)
+    }, 500);
   };
 
-  // State for booking form
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
   const [selectedDuration, setSelectedDuration] = useState("hourly");
   const [bookingMessage, setBookingMessage] = useState("");
 
-  // Map Uzbek day names to English keys
   const dayMap = {
     dushanba: "monday",
     seshanba: "tuesday",
@@ -94,22 +89,14 @@ export default function Details() {
     yakshanba: "sunday",
   };
 
-  // Fallback to a default image if image is not an array or is empty
   const images =
     Array.isArray(stadium.image) && stadium.image.length > 0
       ? stadium.image
       : ["/src/assets/default.jpg"];
 
-  console.log(
-    `Stadium ${stadium.id} images:`,
-    images,
-    `Current index: ${currentImageIndex}`
-  );
-
   const getTimeSlots = (date) => {
     if (!date) return [];
 
-    // Mock schedule as fallback
     const mockSchedule = ["09:00-22:00"];
 
     const dayOfWeekUzbek = new Date(date)
@@ -166,6 +153,31 @@ export default function Details() {
 
   const mapEmbedUrl = `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2996.5!2d${stadium.location.coordinates.longitude}!3d${stadium.location.coordinates.latitude}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDEuMzExMSw2OS4yNzk3!5e0!3m2!1sen!2sus!4v1690000000000!5m2!1sen!2sus`;
 
+  const [likedStadiums, setLikedStadiums] = useState(() => {
+    const saved = localStorage.getItem("likedStadiums");
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem("likedStadiums", JSON.stringify(likedStadiums));
+  }, [likedStadiums]);
+
+  useEffect(() => {
+    const likedStadiumsData = data?.filter((stadium) =>
+      likedStadiums.includes(Number(stadium.id))
+    );
+    dispatch(addNewData(likedStadiumsData));
+  }, [likedStadiums, data, dispatch]);
+
+  const toggleLike = (stadiumId) => {
+    const numericId = Number(stadiumId);
+    setLikedStadiums((prev) =>
+      prev.includes(numericId)
+        ? prev.filter((id) => id !== numericId)
+        : [...prev, numericId]
+    );
+  };
+
   return (
     <div className="container mx-auto p-4 mb-16 max-w-5xl">
       <Card className="overflow-hidden border shadow-lg rounded-2xl">
@@ -198,11 +210,18 @@ export default function Details() {
             )}
             <div className="absolute top-4 left-5 sm:left-10 flex items-center gap-2">
               <Button
-                variant="ghost"
+                variant="outline"
                 size="icon"
                 className="bg-white/90 dark:bg-gray-900/80 size-8 rounded-full shadow-md"
+                onClick={() => toggleLike(stadium.id)}
               >
-                <Heart className="size-4" />
+                <Heart
+                  className={`size-4 transition-colors ${
+                    likedStadiums.includes(Number(stadium.id))
+                      ? "fill-red-500 text-red-500"
+                      : ""
+                  }`}
+                />
               </Button>
               <Button
                 variant="ghost"

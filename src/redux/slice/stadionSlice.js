@@ -284,14 +284,19 @@ const initialState = {
       construction_year: 2010,
     },
   ],
+  newData: [],
 };
 
 export const stadionsSlice = createSlice({
   name: "stadions",
   initialState,
-  reducers: {},
+  reducers: {
+    addNewData: (state, { payload }) => {
+      state.newData = payload;
+    },
+  },
 });
 
-export const {} = stadionsSlice.actions;
+export const { addNewData } = stadionsSlice.actions;
 
 export default stadionsSlice.reducer;
