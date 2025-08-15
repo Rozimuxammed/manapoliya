@@ -313,7 +313,7 @@ export default function Details() {
           <div className="space-y-8">
             <div>
               <h3 className="font-semibold mb-2">Narxlar</h3>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <Button variant="outline" className="justify-start font-medium">
                   Soatlik: {stadium.price.hourly} {stadium.price.currency}
                 </Button>
