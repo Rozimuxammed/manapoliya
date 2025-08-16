@@ -21,6 +21,8 @@ import {
   Globe,
   ChevronLeft,
   ChevronRight,
+  X,
+  Send,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -46,6 +48,29 @@ import { addNewData } from "../redux/slice/stadionSlice";
 export default function Details() {
   const { id } = useParams();
   const { data } = useSelector((state) => state.stadions);
+  const [shareModal, setShareModal] = useState(null); // stadium id
+  const [selectedContacts, setSelectedContacts] = useState([]);
+
+  const mockContacts = [
+    { id: 1, name: "Ali", username: "@ali" },
+    { id: 2, name: "Vali", username: "@vali" },
+    { id: 3, name: "Sardor", username: "@sardor" },
+    { id: 4, name: "Dilnoza", username: "@dilnoza" },
+    { id: 5, name: "Malika", username: "@malika" },
+  ];
+
+  const toggleContact = (id) => {
+    setSelectedContacts((prev) =>
+      prev.includes(id) ? prev.filter((c) => c !== id) : [...prev, id]
+    );
+  };
+
+  const sendToContacts = () => {
+    const chosen = mockContacts.filter((c) => selectedContacts.includes(c.id));
+    console.log("📤 Yuborildi:", chosen, "stadiumId:", shareModal);
+    setShareModal(null);
+    setSelectedContacts([]);
+  };
 
   const stadium = data?.find((item) => String(item.id) === String(id));
 
@@ -180,6 +205,58 @@ export default function Details() {
 
   return (
     <div className="container mx-auto p-4 mb-16 max-w-5xl">
+      {shareModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center p-3 justify-center z-50">
+          <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-6 w-96 relative">
+            <Button
+              variant="ghost"
+              className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+              onClick={() => setShareModal(null)}
+            >
+              <X className="size-5" />
+            </Button>
+            <h2 className="text-lg font-bold mb-4">Do‘stlarga ulashish</h2>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+              Quyidagi kontaktlardan bir nechtasini belgilang:
+            </p>
+
+            <div className="max-h-40 overflow-y-auto mb-4 space-y-2">
+              {mockContacts.map((c) => (
+                <Label
+                  key={c.id}
+                  className="flex items-center gap-2 cursor-pointer"
+                >
+                  <input
+                    type="checkbox"
+                    checked={selectedContacts.includes(c.id)}
+                    onChange={() => toggleContact(c.id)}
+                  />
+                  <span className="font-medium">{c.name}</span>
+                  <span className="text-gray-500 text-sm">{c.username}</span>
+                </Label>
+              ))}
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <Button
+                className="w-full flex items-center gap-2"
+                onClick={sendToContacts}
+                disabled={selectedContacts.length === 0}
+              >
+                <Send className="size-4" />
+                Tanlanganlarga yuborish
+              </Button>
+              <Button
+                variant="secondary"
+                className="w-full"
+                onClick={() => setShareModal(null)}
+              >
+                Bekor qilish
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
       <Card className="overflow-hidden border shadow-lg rounded-2xl">
         <CardHeader className="p-0 relative">
           <div className="w-[95%] mx-auto h-52 sm:h-64 md:h-80">
@@ -227,6 +304,7 @@ export default function Details() {
                 variant="ghost"
                 size="icon"
                 className="bg-white/90 dark:bg-gray-900/80 size-8 rounded-full shadow-md"
+                onClick={() => setShareModal(stadium.id)}
               >
                 <Share2 className="size-4 text-primary" />
               </Button>
