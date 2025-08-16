@@ -26,13 +26,14 @@ export default function Interes() {
                 <CardTitle>Telegram Kanalimiz</CardTitle>
               </CardHeader>
 
-              <CardContent className="relative z-10">
+              <CardContent className="relative">
                 <p className="text-gray-600">
-                  Yangiliklar va e’lonlardan birinchi bo‘lib xabardor bo‘ling.
+                  Yangiliklar va e’lonlardan birinchi bo‘lib xabardor bo‘lish
+                  uchun hoziroq bosing.
                 </p>
               </CardContent>
 
-              <div className="absolute inset-0 flex items-center justify-center bg-black/70 text-white text-xl font-bold opacity-0 group-hover:opacity-100 transition-opacity rounded-[10px] duration-500">
+              <div className="absolute inset-0 flex items-center justify-center bg-black/80 text-white text-xl font-bold opacity-0 group-hover:opacity-100 transition-opacity rounded-[10px] duration-500">
                 Kirish →
               </div>
             </Card>
