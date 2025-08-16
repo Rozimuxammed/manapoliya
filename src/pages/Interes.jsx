@@ -18,8 +18,8 @@ export default function Interes() {
             transition={{ type: "spring", stiffness: 300 }}
             className="relative group"
           >
-            <Card className="overflow-hidden cursor-pointer relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-400/0 via-purple-500/0 to-pink-500/0 group-hover:from-blue-400/30 group-hover:via-purple-500/30 group-hover:to-pink-500/30 transition-all duration-500"></div>
+            <Card className="relative cursor-pointer transition-all hover:scale-105 active:scale-95 hover:shadow-xl">
+              <div className="absolute inset-0 rounded-[10px] bg-gradient-to-r from-blue-400/0 via-purple-500/0 to-pink-500/0 group-hover:from-blue-400/30 group-hover:via-purple-500/30 group-hover:to-pink-500/30 transition-all duration-500"></div>
 
               <CardHeader className="flex flex-row items-center gap-3 relative z-10">
                 <Send className="w-8 h-8 text-blue-500" />
@@ -32,7 +32,7 @@ export default function Interes() {
                 </p>
               </CardContent>
 
-              <div className="absolute inset-0 flex items-center justify-center bg-black/70 text-white text-xl font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+              <div className="absolute inset-0 flex items-center justify-center bg-black/70 text-white text-xl font-bold opacity-0 group-hover:opacity-100 transition-opacity rounded-[10px] duration-500">
                 Kirish →
               </div>
             </Card>
@@ -49,8 +49,8 @@ export default function Interes() {
             transition={{ type: "spring", stiffness: 300 }}
             className="relative group"
           >
-            <Card className="overflow-hidden cursor-pointer relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-green-400/0 via-yellow-400/0 to-red-400/0 group-hover:from-green-400/30 group-hover:via-yellow-400/30 group-hover:to-red-400/30 transition-all duration-500"></div>
+            <Card className="relative cursor-pointer transition-all hover:scale-105 active:scale-95 hover:shadow-xl">
+              <div className="absolute rounded-[10px] inset-0 bg-gradient-to-r from-green-400/0 via-yellow-400/0 to-red-400/0 group-hover:from-green-400/30 group-hover:via-yellow-400/30 group-hover:to-red-400/30 transition-all duration-500"></div>
 
               <CardHeader className="flex flex-row items-center gap-3 relative z-10">
                 <HelpCircle className="w-8 h-8 text-green-500" />
@@ -64,7 +64,7 @@ export default function Interes() {
               </CardContent>
 
               {/* Hoverda chiqadigan overlay */}
-              <div className="absolute inset-0 flex items-center justify-center bg-black/70 text-white text-xl font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+              <div className="absolute inset-0 flex items-center rounded-[10px] justify-center bg-black/70 text-white text-xl font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                 Kirish →
               </div>
             </Card>
