@@ -61,6 +61,9 @@ export default function Saved() {
 
   return (
     <div className="container mx-auto mb-16 p-3">
+      <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-justify">
+        Saqlanganlar
+      </h1>
       {savedStadiums?.length === 0 ? (
         <div className="flex flex-col items-center justify-center h-[550px] text-center text-gray-500">
           <BookmarkCheck className="size-10 mb-2 text-gray-400" />
@@ -70,7 +73,10 @@ export default function Saved() {
           <p className="text-sm">
             Bosh sahifadan stadionlarni "like" qilib saqlashingiz mumkin.
           </p>
-          <Link to="/" className={`${buttonVariants({ variant: "outline" })} mt-5`}>
+          <Link
+            to="/"
+            className={`${buttonVariants({ variant: "outline" })} mt-5`}
+          >
             Stadionlarni ko'rish
           </Link>
         </div>

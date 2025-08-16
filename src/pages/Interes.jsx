@@ -5,8 +5,9 @@ import { motion } from "framer-motion";
 export default function Interes() {
   return (
     <div className="container mx-auto p-6">
-      <h1 className="text-center text-4xl font-bold mb-8">Qiziqarli Sahifa</h1>
-
+      <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-justify">
+        Qiziqarli Sahifa
+      </h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <a
           href="https://t.me/manapolya_uz"
