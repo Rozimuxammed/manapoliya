@@ -8,15 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Heart,
-  Share2,
-  ChevronLeft,
-  ChevronRight,
-  X,
-  Send,
-  Map,
-} from "lucide-react";
+import { Heart, Share2, X, Send, Map } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -223,6 +215,47 @@ export default function Home() {
       [stadiumId]:
         (prev[stadiumId] || 0) === 0 ? length - 1 : (prev[stadiumId] || 0) - 1,
     }));
+
+  // Swipe functionality
+  const [touchStart, setTouchStart] = useState({ x: 0, y: 0 });
+  const [touchEnd, setTouchEnd] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+
+  const handleTouchStart = (e) => {
+    setTouchStart({
+      x: e.targetTouches[0].clientX,
+      y: e.targetTouches[0].clientY,
+    });
+    setIsDragging(false);
+  };
+
+  const handleTouchMove = (e) => {
+    setTouchEnd({
+      x: e.targetTouches[0].clientX,
+      y: e.targetTouches[0].clientY,
+    });
+    setIsDragging(true);
+  };
+
+  const handleTouchEnd = (stadiumId, imagesLength) => {
+    if (!isDragging) return;
+
+    const distanceX = touchStart.x - touchEnd.x;
+    const distanceY = touchStart.y - touchEnd.y;
+
+    const isLeftSwipe = distanceX > 50;
+    const isRightSwipe = distanceX < -50;
+
+    // Faqat gorizontal swipe bo'lsa ishlaydi
+    if (Math.abs(distanceX) > Math.abs(distanceY)) {
+      if (isLeftSwipe && imagesLength > 1) {
+        nextImage(stadiumId, imagesLength);
+      }
+      if (isRightSwipe && imagesLength > 1) {
+        prevImage(stadiumId, imagesLength);
+      }
+    }
+  };
 
   const handleRegionChange = (value) => {
     if (value === "nearby") {
@@ -511,31 +544,34 @@ export default function Home() {
               className="relative w-full shadow-none border rounded-xl overflow-hidden"
             >
               <CardHeader className="p-0 relative">
-                <div className="w-[95%] mx-auto h-56 sm:h-64 md:h-72">
+                <div
+                  className="w-[95%] mx-auto h-56 sm:h-64 md:h-72 relative overflow-hidden rounded-md cursor-pointer select-none"
+                  onTouchStart={handleTouchStart}
+                  onTouchMove={handleTouchMove}
+                  onTouchEnd={() => handleTouchEnd(id, images.length)}
+                  onClick={() =>
+                    images.length > 1 && nextImage(id, images.length)
+                  }
+                >
                   <img
                     src={images[currentIndex]}
-                    className="w-full h-full rounded-md object-cover"
+                    className="w-full h-full object-cover transition-transform duration-300 ease-in-out select-none pointer-events-none"
                     alt={`${name} ${currentIndex + 1}`}
+                    draggable={false}
                   />
                   {images.length > 1 && (
-                    <>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="absolute top-1/2 left-4 transform -translate-y-1/2 bg-white/90 dark:bg-gray-900/80 size-8 rounded-full shadow-md"
-                        onClick={() => prevImage(id, images.length)}
-                      >
-                        <ChevronLeft className="size-4 text-primary" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-white/90 dark:bg-gray-900/80 size-8 rounded-full shadow-md"
-                        onClick={() => nextImage(id, images.length)}
-                      >
-                        <ChevronRight className="size-4 text-primary" />
-                      </Button>
-                    </>
+                    <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
+                      {images.map((_, index) => (
+                        <div
+                          key={index}
+                          className={`w-2 h-2 rounded-full transition-all duration-200 ${
+                            index === currentIndex
+                              ? "bg-white scale-110"
+                              : "bg-white/50"
+                          }`}
+                        />
+                      ))}
+                    </div>
                   )}
                 </div>
               </CardHeader>

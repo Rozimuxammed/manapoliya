@@ -19,8 +19,6 @@ import {
   Building2,
   ParkingCircle,
   Globe,
-  ChevronLeft,
-  ChevronRight,
   X,
   Send,
 } from "lucide-react";
@@ -79,24 +77,56 @@ export default function Details() {
   }
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [isTransitioning, setIsTransitioning] = useState(false);
 
   const dispatch = useDispatch();
 
+  // Swipe functionality
+  const [touchStart, setTouchStart] = useState({ x: 0, y: 0 });
+  const [touchEnd, setTouchEnd] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+
+  const handleTouchStart = (e) => {
+    setTouchStart({
+      x: e.targetTouches[0].clientX,
+      y: e.targetTouches[0].clientY,
+    });
+    setIsDragging(false);
+  };
+
+  const handleTouchMove = (e) => {
+    setTouchEnd({
+      x: e.targetTouches[0].clientX,
+      y: e.targetTouches[0].clientY,
+    });
+    setIsDragging(true);
+  };
+
+  const handleTouchEnd = () => {
+    if (!isDragging) return;
+
+    const distanceX = touchStart.x - touchEnd.x;
+    const distanceY = touchStart.y - touchEnd.y;
+
+    const isLeftSwipe = distanceX > 50;
+    const isRightSwipe = distanceX < -50;
+
+    // Faqat gorizontal swipe bo'lsa ishlaydi
+    if (Math.abs(distanceX) > Math.abs(distanceY)) {
+      if (isLeftSwipe && images.length > 1) {
+        nextImage();
+      }
+      if (isRightSwipe && images.length > 1) {
+        prevImage();
+      }
+    }
+  };
+
   const nextImage = () => {
-    setIsTransitioning(true);
     setCurrentImageIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
-    setTimeout(() => {
-      setIsTransitioning(false);
-    }, 500);
   };
 
   const prevImage = () => {
-    setIsTransitioning(true);
     setCurrentImageIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
-    setTimeout(() => {
-      setIsTransitioning(false);
-    }, 500);
   };
 
   const [selectedDate, setSelectedDate] = useState("");
@@ -215,7 +245,7 @@ export default function Details() {
             >
               <X className="size-5" />
             </Button>
-            <h2 className="text-lg font-bold mb-4">Do‘stlarga ulashish</h2>
+            <h2 className="text-lg font-bold mb-4">Do'stlarga ulashish</h2>
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
               Quyidagi kontaktlardan bir nechtasini belgilang:
             </p>
@@ -259,38 +289,42 @@ export default function Details() {
       )}
       <Card className="overflow-hidden border shadow-lg rounded-2xl">
         <CardHeader className="p-0 relative">
-          <div className="w-[95%] mx-auto h-52 sm:h-64 md:h-80">
+          <div
+            className="w-[95%] mx-auto h-52 sm:h-64 md:h-80 relative overflow-hidden rounded-md cursor-pointer select-none"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+            onClick={() => images.length > 1 && nextImage()}
+          >
             <img
               src={images[currentImageIndex]}
               alt={`${stadium.name} ${currentImageIndex + 1}`}
-              className={`w-full h-full rounded-md object-cover`}
+              className="w-full h-full object-cover transition-transform duration-300 ease-in-out select-none pointer-events-none"
+              draggable={false}
             />
             {images.length > 1 && (
-              <>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="absolute top-1/2 left-5 sm:left-10 transform -translate-y-1/2 bg-white/90 dark:bg-gray-900/80 size-8 rounded-full shadow-md"
-                  onClick={prevImage}
-                >
-                  <ChevronLeft className="size-4 text-primary" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="absolute top-1/2 right-5 sm:right-10 transform -translate-y-1/2 bg-white/90 dark:bg-gray-900/80 size-8 rounded-full shadow-md"
-                  onClick={nextImage}
-                >
-                  <ChevronRight className="size-4 text-primary" />
-                </Button>
-              </>
+              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
+                {images.map((_, index) => (
+                  <div
+                    key={index}
+                    className={`w-2 h-2 rounded-full transition-all duration-200 ${
+                      index === currentImageIndex
+                        ? "bg-white scale-110"
+                        : "bg-white/50"
+                    }`}
+                  />
+                ))}
+              </div>
             )}
             <div className="absolute top-4 left-5 sm:left-10 flex items-center gap-2">
               <Button
                 variant="outline"
                 size="icon"
                 className="bg-white/90 dark:bg-gray-900/80 size-8 rounded-full shadow-md"
-                onClick={() => toggleLike(stadium.id)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleLike(stadium.id);
+                }}
               >
                 <Heart
                   className={`size-4 transition-colors ${
@@ -304,7 +338,10 @@ export default function Details() {
                 variant="ghost"
                 size="icon"
                 className="bg-white/90 dark:bg-gray-900/80 size-8 rounded-full shadow-md"
-                onClick={() => setShareModal(stadium.id)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShareModal(stadium.id);
+                }}
               >
                 <Share2 className="size-4 text-primary" />
               </Button>
