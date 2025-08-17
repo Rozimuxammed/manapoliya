@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -547,6 +547,12 @@ export default function Details() {
                   className="w-full bg-primary hover:bg-primary/90"
                 >
                   Hozir band qilish
+                </Button>
+                <Button
+                  type="submit"
+                  className="w-full bg-primary hover:bg-primary/90"
+                >
+                  <Link to="/">Bosh sahifaga qaytish</Link>
                 </Button>
                 {bookingMessage && (
                   <p className="text-sm text-center text-muted-foreground">

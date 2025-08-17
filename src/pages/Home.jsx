@@ -16,8 +16,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Link } from "react-router-dom";
-import { useState, useEffect, useRef } from "react";
+import { Link, useLocation as useRouterLocation } from "react-router-dom";
+import { useState, useEffect, useRef, useLayoutEffect } from "react";
 import { addNewData } from "../redux/slice/stadionSlice";
 import { Label } from "../components/ui/label";
 import L from "leaflet";
@@ -30,6 +30,15 @@ L.Icon.Default.mergeOptions({
   iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
   shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
 });
+
+const isValidCoordinate = (coord) => {
+  return (
+    typeof coord === "number" &&
+    !isNaN(coord) &&
+    coord !== null &&
+    coord !== undefined
+  );
+};
 
 export default function Home() {
   const { data } = useSelector((state) => state.stadions);
@@ -45,12 +54,26 @@ export default function Home() {
   const [location, setLocation] = useState(null);
   const [showMapModal, setShowMapModal] = useState(false);
   const [nearbyStadiums, setNearbyStadiums] = useState([]);
+  const [mapError, setMapError] = useState(null);
   const mapRef = useRef(null);
   const mapContainerRef = useRef(null);
+  const routerLocation = useRouterLocation();
 
-  // Ikki nuqta orasidagi masofani hisoblash (Haversine formula)
+  useLayoutEffect(() => {
+    if (routerLocation.state?.fromDetails) {
+      const scrollPosition = sessionStorage.getItem("scrollPosition");
+      if (scrollPosition) {
+        window.scrollTo(0, parseInt(scrollPosition));
+      }
+    }
+
+    return () => {
+      sessionStorage.setItem("scrollPosition", window.scrollY.toString());
+    };
+  }, [routerLocation]);
+
   const calculateDistance = (lat1, lon1, lat2, lon2) => {
-    const R = 6371; // Yer radiusi km da
+    const R = 6371;
     const dLat = ((lat2 - lat1) * Math.PI) / 180;
     const dLon = ((lon2 - lon1) * Math.PI) / 180;
     const a =
@@ -60,16 +83,23 @@ export default function Home() {
         Math.sin(dLon / 2) *
         Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    const distance = R * c;
-    return distance;
+    return R * c;
   };
 
-  // Yaqin stadionlarni topish
   const findNearbyStadiums = (userLat, userLng, maxDistance = 10) => {
+    if (!isValidCoordinate(userLat) || !isValidCoordinate(userLng)) {
+      return [];
+    }
+
     return (
       data
         ?.filter((stadium) => {
-          if (!stadium.lat || !stadium.lng) return false;
+          if (
+            !isValidCoordinate(stadium.lat) ||
+            !isValidCoordinate(stadium.lng)
+          ) {
+            return false;
+          }
           const distance = calculateDistance(
             userLat,
             userLng,
@@ -87,77 +117,119 @@ export default function Home() {
   };
 
   useEffect(() => {
-    if (showMapModal && mapContainerRef.current && location) {
-      // Eski xaritani tozalash
-      if (mapRef.current) {
-        mapRef.current.remove();
-      }
-
-      // Yangi xarita yaratish
-      mapRef.current = L.map(mapContainerRef.current).setView(
-        [location.lat, location.lng],
-        13
-      );
-
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution:
-          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      }).addTo(mapRef.current);
-
-      // Foydalanuvchi joylashuvini belgilash
-      const userIcon = L.divIcon({
-        html: '<div style="background-color: #3b82f6; width: 20px; height: 20px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>',
-        className: "user-location-marker",
-        iconSize: [20, 20],
-        iconAnchor: [10, 10],
-      });
-
-      L.marker([location.lat, location.lng], { icon: userIcon })
-        .addTo(mapRef.current)
-        .bindPopup("<b>Sizning joylashuvingiz</b>")
-        .openPopup();
-
-      // Yaqin stadionlarni xaritaga qo'shish
-      nearbyStadiums.forEach((stadium) => {
-        const distance = calculateDistance(
-          location.lat,
-          location.lng,
-          stadium.lat,
-          stadium.lng
-        );
-
-        const stadiumIcon = L.divIcon({
-          html: '<div style="background-color: #ef4444; width: 16px; height: 16px; border-radius: 50%; border: 2px solid white; box-shadow: 0 1px 3px rgba(0,0,0,0.3);"></div>',
-          className: "stadium-marker",
-          iconSize: [16, 16],
-          iconAnchor: [8, 8],
-        });
-
-        L.marker([stadium.lat, stadium.lng], { icon: stadiumIcon })
-          .addTo(mapRef.current)
-          .bindPopup(
-            `<div style="min-width: 200px;">
-              <b>${stadium.name}</b><br>
-              <p style="margin: 5px 0; color: #666; font-size: 12px;">${
-                stadium.description
-              }</p>
-              <p style="margin: 5px 0; font-weight: bold; color: #059669;">${
-                stadium.price.hourly
-              } ${stadium.price.currency}</p>
-              <p style="margin: 5px 0; color: #3b82f6; font-size: 11px;">📍 ${distance.toFixed(
-                1
-              )} km masofa</p>
-            </div>`
-          );
-      });
-
-      return () => {
+    if (showMapModal && mapContainerRef.current) {
+      try {
         if (mapRef.current) {
           mapRef.current.remove();
-          mapRef.current = null;
         }
-      };
+
+        let centerLat = 41.2995; 
+        let centerLng = 69.2401;
+
+        if (
+          location &&
+          isValidCoordinate(location.lat) &&
+          isValidCoordinate(location.lng)
+        ) {
+          centerLat = location.lat;
+          centerLng = location.lng;
+        }
+
+        mapRef.current = L.map(mapContainerRef.current).setView(
+          [centerLat, centerLng],
+          13
+        );
+
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          attribution:
+            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        }).addTo(mapRef.current);
+
+        if (
+          location &&
+          isValidCoordinate(location.lat) &&
+          isValidCoordinate(location.lng)
+        ) {
+          const userIcon = L.divIcon({
+            html: '<div style="background-color: #3b82f6; width: 20px; height: 20px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>',
+            className: "user-location-marker",
+            iconSize: [20, 20],
+            iconAnchor: [10, 10],
+          });
+
+          L.marker([location.lat, location.lng], { icon: userIcon })
+            .addTo(mapRef.current)
+            .bindPopup("<b>Sizning joylashuvingiz</b>")
+            .openPopup();
+        }
+
+        nearbyStadiums.forEach((stadium) => {
+          if (
+            !isValidCoordinate(stadium.lat) ||
+            !isValidCoordinate(stadium.lng)
+          ) {
+            console.warn(
+              "Skipping stadium with invalid coordinates:",
+              stadium.id,
+              stadium.name
+            );
+            return;
+          }
+
+          const distance =
+            location &&
+            isValidCoordinate(location.lat) &&
+            isValidCoordinate(location.lng)
+              ? calculateDistance(
+                  location.lat,
+                  location.lng,
+                  stadium.lat,
+                  stadium.lng
+                )
+              : "Noma'lum";
+
+          const stadiumIcon = L.divIcon({
+            html: '<div style="background-color: #ef4444; width: 16px; height: 16px; border-radius: 50%; border: 2px solid white; box-shadow: 0 1px 3px rgba(0,0,0,0.3);"></div>',
+            className: "stadium-marker",
+            iconSize: [16, 16],
+            iconAnchor: [8, 8],
+          });
+
+          L.marker([stadium.lat, stadium.lng], { icon: stadiumIcon })
+            .addTo(mapRef.current)
+            .bindPopup(
+              `<div style="min-width: 200px;">
+                <b>${stadium.name}</b><br>
+                <p style="margin: 5px 0; color: #666; font-size: 12px;">${
+                  stadium.description || "Tavsif mavjud emas"
+                }</p>
+                <p style="margin: 5px 0; font-weight: bold; color: #059669;">${
+                  stadium.price?.hourly || "Noma'lum"
+                } ${stadium.price?.currency || ""}</p>
+                <p style="margin: 5px 0; color: #3b82f6; font-size: 11px;">📍 ${
+                  typeof distance === "number"
+                    ? distance.toFixed(1) + " km"
+                    : distance
+                } masofa</p>
+              </div>`
+            );
+        });
+
+        setMapError(null);
+      } catch (error) {
+        console.error("Xarita yaratishda xatolik:", error);
+        setMapError(
+          "Xaritani yuklashda xatolik yuz berdi. Iltimos, qayta urunib ko'ring."
+        );
+      }
     }
+
+    return () => {
+      if (mapRef.current) {
+        mapRef.current.remove();
+        mapRef.current = null;
+      }
+    };
   }, [showMapModal, location, nearbyStadiums]);
 
   const mockContacts = [
@@ -216,7 +288,6 @@ export default function Home() {
         (prev[stadiumId] || 0) === 0 ? length - 1 : (prev[stadiumId] || 0) - 1,
     }));
 
-  // Swipe functionality
   const [touchStart, setTouchStart] = useState({ x: 0, y: 0 });
   const [touchEnd, setTouchEnd] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
@@ -246,7 +317,6 @@ export default function Home() {
     const isLeftSwipe = distanceX > 50;
     const isRightSwipe = distanceX < -50;
 
-    // Faqat gorizontal swipe bo'lsa ishlaydi
     if (Math.abs(distanceX) > Math.abs(distanceY)) {
       if (isLeftSwipe && imagesLength > 1) {
         nextImage(stadiumId, imagesLength);
@@ -259,6 +329,7 @@ export default function Home() {
 
   const handleRegionChange = (value) => {
     if (value === "nearby") {
+      setMapError(null);
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           (pos) => {
@@ -268,35 +339,50 @@ export default function Home() {
             };
             setLocation(userLocation);
 
-            // Yaqin stadionlarni topish
             const nearby = findNearbyStadiums(
               userLocation.lat,
               userLocation.lng
             );
             setNearbyStadiums(nearby);
-
-            // Xarita modalini ochish
             setShowMapModal(true);
-
-            console.log("User Location:", pos.coords);
-            console.log("Nearby Stadiums:", nearby);
           },
           (err) => {
             console.error("Geolocation error:", err);
-            alert(
+            setMapError(
               "Joylashuvni aniqlashda xatolik yuz berdi. Iltimos, brauzer sozlamalarini tekshiring."
             );
+            const fallbackLocation = { lat: 41.2995, lng: 69.2401 };
+            setLocation(fallbackLocation);
+            setNearbyStadiums(
+              data?.filter(
+                (s) => isValidCoordinate(s.lat) && isValidCoordinate(s.lng)
+              ) || []
+            );
+            setShowMapModal(true);
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 5000,
+            maximumAge: 0,
           }
         );
       } else {
-        alert("Sizning qurilmangiz geolokatsiyani qo'llab-quvvatlamaydi");
+        setMapError("Sizning qurilmangiz geolokatsiyani qo'llab-quvvatlamaydi");
+        const fallbackLocation = { lat: 41.2995, lng: 69.2401 };
+        setLocation(fallbackLocation);
+        setNearbyStadiums(
+          data?.filter(
+            (s) => isValidCoordinate(s.lat) && isValidCoordinate(s.lng)
+          ) || []
+        );
+        setShowMapModal(true);
       }
     }
     setSelectedRegion(value);
   };
 
-  // Xaritada ko'rsatish tugmasi uchun handler
   const handleShowOnMap = () => {
+    setMapError(null);
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
@@ -305,23 +391,37 @@ export default function Home() {
             lng: pos.coords.longitude,
           };
           setLocation(userLocation);
-
-          // Barcha stadionlarni ko'rsatish
-          setNearbyStadiums(data || []);
+          setNearbyStadiums(
+            data?.filter(
+              (s) => isValidCoordinate(s.lat) && isValidCoordinate(s.lng)
+            ) || []
+          );
           setShowMapModal(true);
         },
         (err) => {
           console.error("Geolocation error:", err);
-          // Joylashuvsiz ham xaritani ko'rsatish
-          setLocation({ lat: 41.2995, lng: 69.2401 }); // Toshkent koordinatalari
-          setNearbyStadiums(data || []);
+          setMapError(
+            "Joylashuvni aniqlashda xatolik yuz berdi. Standart joylashuv ishlatilmoqda."
+          );
+          const fallbackLocation = { lat: 41.2995, lng: 69.2401 };
+          setLocation(fallbackLocation);
+          setNearbyStadiums(
+            data?.filter(
+              (s) => isValidCoordinate(s.lat) && isValidCoordinate(s.lng)
+            ) || []
+          );
           setShowMapModal(true);
         }
       );
     } else {
-      // Geolocation qo'llab-quvvatlanmasa, Toshkent markazi
-      setLocation({ lat: 41.2995, lng: 69.2401 });
-      setNearbyStadiums(data || []);
+      setMapError("Geolocation not supported. Using default location.");
+      const fallbackLocation = { lat: 41.2995, lng: 69.2401 };
+      setLocation(fallbackLocation);
+      setNearbyStadiums(
+        data?.filter(
+          (s) => isValidCoordinate(s.lat) && isValidCoordinate(s.lng)
+        ) || []
+      );
       setShowMapModal(true);
     }
   };
@@ -468,6 +568,12 @@ export default function Home() {
                 : "Stadionlar xaritasi"}
             </h2>
 
+            {mapError && (
+              <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4">
+                <p>{mapError}</p>
+              </div>
+            )}
+
             {selectedRegion === "nearby" && (
               <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
                 {nearbyStadiums.length > 0
@@ -481,7 +587,6 @@ export default function Home() {
               className="w-full h-96 rounded-md mb-4"
             ></div>
 
-            {/* Yaqin stadionlar ro'yxati */}
             {selectedRegion === "nearby" &&
               nearbyStadiums.length > 0 &&
               location && (
@@ -529,7 +634,6 @@ export default function Home() {
         </div>
       )}
 
-      {/* Stadium Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {data?.map(({ image, price, name, description, id }) => {
           const images =
@@ -558,6 +662,9 @@ export default function Home() {
                     className="w-full h-full object-cover transition-transform duration-300 ease-in-out select-none pointer-events-none"
                     alt={`${name} ${currentIndex + 1}`}
                     draggable={false}
+                    onError={(e) => {
+                      e.target.src = "/src/assets/default.jpg";
+                    }}
                   />
                   {images.length > 1 && (
                     <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
@@ -578,13 +685,13 @@ export default function Home() {
               <CardContent className="p-4">
                 <CardTitle className="text-lg sm:text-xl">{name}</CardTitle>
                 <CardDescription className="line-clamp-2 text-sm sm:text-base">
-                  {description}
+                  {description || "Tavsif mavjud emas"}
                 </CardDescription>
               </CardContent>
               <CardFooter className="flex flex-wrap gap-2 p-4">
                 <Button variant="outline" className="flex-1 cursor-pointer">
-                  {price.hourly}
-                  <span className="text-xs ml-1">{price.currency}</span>
+                  {price?.hourly || "Noma'lum"}
+                  <span className="text-xs ml-1">{price?.currency || ""}</span>
                 </Button>
                 <Button
                   variant="outline"
@@ -613,7 +720,9 @@ export default function Home() {
                   variant="secondary"
                   className="flex-1 cursor-pointer"
                 >
-                  <Link to={`/details/${id}`}>Batafsil</Link>
+                  <Link to={`/details/${id}`} state={{ fromHome: true }}>
+                    Batafsil
+                  </Link>
                 </Button>
               </CardFooter>
             </Card>
