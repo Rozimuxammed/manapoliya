@@ -346,7 +346,7 @@ export default function Details() {
                 <Share2 className="size-4 text-primary" />
               </Button>
             </div>
-            <div className="absolute bottom-4 right-10 flex items-center bg-white/90 dark:bg-gray-900/80 px-3 py-1 rounded-full text-sm shadow-md">
+            <div className="absolute top-5 right-3 sm:right-10 flex items-center bg-white/90 dark:bg-gray-900/80 px-3 py-1 rounded-full text-sm shadow-md">
               <Star className="size-4 mr-1 text-yellow-500" />
               <span className="font-medium">{stadium.rating}</span>
               <span className="text-muted-foreground ml-1">
