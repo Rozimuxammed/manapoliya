@@ -42,6 +42,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { addNewData } from "../redux/slice/stadionSlice";
+import { buttonVariants } from "@/components/ui/button";
+
 
 export default function Details() {
   const { id } = useParams();
@@ -548,12 +550,14 @@ export default function Details() {
                 >
                   Hozir band qilish
                 </Button>
-                <Button
-                  type="submit"
-                  className="w-full bg-primary hover:bg-primary/90"
+                <Link
+                  to={"/"}
+                  className={`${buttonVariants({
+                    variant: "outline",
+                  })} w-full text-white dark:text-gray-900 bg-gray-900 dark:bg-primary hover:bg-primary/90`}
                 >
-                  <Link to="/">Bosh sahifaga qaytish</Link>
-                </Button>
+                  Bosh sahifaga qaytish
+                </Link>
                 {bookingMessage && (
                   <p className="text-sm text-center text-muted-foreground">
                     {bookingMessage}
