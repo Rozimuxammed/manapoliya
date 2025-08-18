@@ -546,14 +546,14 @@ export default function Details() {
                 </div>
                 <Button
                   type="submit"
-                  className="w-full bg-primary hover:bg-primary/90"
+                  className="w-full bg-primary cursor-pointer hover:bg-primary/90"
                 >
                   Hozir band qilish
                 </Button>
                 <Link
                   to={"/"}
                   className={`${buttonVariants({
-                    variant: "outline",
+                    variant: "default",
                   })} w-full text-white dark:text-gray-900 bg-gray-900 dark:bg-primary hover:bg-primary/90`}
                 >
                   Bosh sahifaga qaytish
